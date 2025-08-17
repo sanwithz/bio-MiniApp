@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Quiz Game</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+
+    <!-- Sweet Alert -->
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Loading Overlay -->
+    <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
+
+    <!-- LIFF SDK --> 
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai');
+      
+        * {
+            box-sizing: border-box;
+            font-family: 'Noto Sans Thai', sans-serif;
+        }
+      
+        .time_line {
+            height: 5px;
+            width: 0;
+            background-color: #ff9900;
+            transition: width 0.5s linear;
+        }
+
+        .question-image {
+            max-width: 100%;
+            max-height: 200px;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            background: linear-gradient(0deg, rgba(252, 233, 233, 1) 0%, rgba(224, 244, 241, 1) 26%, rgba(255, 255, 255, 1) 71%);
+            flex-direction: column;
+        }
+      
+        .list {
+            background-color: #ffffff;
+            padding: 1.8em 1.2em;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+            border-radius: 0.6em;
+        }
+
+        footer {
+            margin-top: 30px;
+            background-color: #000;
+            width: 100%;
+            padding: 2px;
+            position: fixed;
+            bottom: 0;
+        }
+
+        footer p,
+        footer a {
+            text-decoration: none;
+            margin: 0;
+        }
+
+        footer .fa {
+            color: #fff740;
+        }
+    </style>
+
+</head>
+<body onload="initializeLiff()">
+
+    <center class="mb-4">
+<!--         <img src="https://lh3.googleusercontent.com/d/1ZMI9FTcErAj1N8vh0viy3rAPnxZ7Zsky" class="mt-4" style="width:200px; height:auto; padding-bottom: 10px;"> -->
+        <h2 class="mt-4"> Daily Quiz</h2>
+        <h5 class="text-center text-danger">สื่อ และนวัตกรรมครูสิทธิชาติ สิทธิ</h5>
+      
+
+  <button class="btn btn-success btn-sm mt-2" onclick="window.location.href='https://first-florentine-barge.glitch.me';">
+    <i class="fa-solid fa-house"></i> กลับหน้าหลัก
+</button>
+        
+    </center>
+
+    <!-- Info Box -->
+    <div class="container list py-5">
+        <div class="card ">
+            <div class="card-header bg-primary text-white text-center">
+                <h5 class="card-title mb-4 mt-4">คำชี้แจงในการทำแบบทดสอบ</h5>
+            </div>
+            <div class="card-body text-dark">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">1. มีเวลา <span id="timeValueDisplay">60</span> วินาทีในการทำแต่ละข้อ</li>
+                    <li class="list-group-item">2. เมื่อตอบแล้วไม่สามารถเปลี่ยนคำตอบได้</li>
+                    <li class="list-group-item">3. เมื่อทำเสร็จแล้วจะไม่สามารถแก้ไขได้อีก</li>
+                    <li class="list-group-item">4. ต้องทำข้อสอบให้ครบทุกข้อ</li>
+                    <li class="list-group-item">5. เมื่อตอบถูกจะได้คะแนนข้อละ 1 คะแนน</li>
+                </ul>
+                <div class="container my-3">
+                    <label for="username" class="form-label"><h5><b>Line Username :</b></h5></label>
+                    <input type="text" id="username" class="form-control" placeholder="กรอกชื่อ-สกุล" readonly required>
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                <center><button class="btn btn-lg btn-primary mt-3 mb-3 restart">เริ่มทำแบบทดสอบ</button></center>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Box -->
+    <div class="container list py-5 quiz_box" style="display:none;">
+        <div class="card">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">แบบทดสอบ</h5>
+                <div class="timer text-white px-3 py-2 rounded">
+                    <span class="time_left_txb">เหลือเวลา</span>
+                    <span class="timer_sec fw-bold" id="timerValue">60</span> วินาที
+                </div>
+            </div>
+            <div class="progress" style="height: 5px;">
+                <div class="time_line"></div>
+            </div>
+            <div class="card-body text-dark">
+                <img id="question-image" class="question-image" style="display:none;">
+                <div class="que_text mb-3"></div>
+                <div class="option_list"></div>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <div class="total_que mt-3 "></div>
+                <button class="btn btn-primary next_btn" style="display:none;">ข้อถัดไป</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Box -->
+    <div class="container list py-5 result_box" style="display:none;">
+        <div class=" text-center">
+            <div class="card-body">
+                <div class="icon mb-3 mt-3">
+                    <i class="fas fa-crown fa-3x text-primary"></i>
+                </div>
+                <h5 class="complete_text">คุณทำข้อสอบครบทุกข้อแล้ว!</h5>
+                <div class="score_text my-3 mt-3 mb-3"></div>
+                <div class="d-flex justify-content-center mb-3">
+<!--                     <button class="btn btn-primary restart me-2">เริ่มใหม่อีกครั้ง</button> -->
+                    <button class="btn btn-primary share_score me-2">แชร์คะแนน</button>
+                    <button class="btn btn-warning share_score me-2" onclick="window.location.href='https://first-florentine-barge.glitch.me';">
+                      กลับหน้าหลัก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+
+    // Global Variables
+    const liffId = '2006600165-1ROQz9rj';  // Line LIFF ID
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZe6gmwRyN7JFNB0KXNOyxPWp9oubIxOAaA23Z7cJzWB4_8jehBTu4rdmP_bNLx0fFaQ/exec'; // Web App URL for data saving
+    const fetchUrl = 'https://opensheet.elk.sh/10zudFijd0KEvpRtrJHKwa0xsK8_dWJdOk_m0R4xixxc/Question'; // URL for fetching quiz questions
+    const TIME_LIMIT = 60;  // Time limit for each question (in seconds)
+    const Question_LIMIT = 10;   // Question limit
+
+    let questions = [];
+    let userName = "";
+    let lineUID = '';
+    let que_count = 0;
+    let userScore = 0;
+    let counter;
+    let counterLine;
+    let answered = false;
+
+    // Display the time limit on the page
+    document.getElementById("timeValueDisplay").textContent = TIME_LIMIT;
+    document.getElementById("timerValue").textContent = TIME_LIMIT;
+
+    // Initialize LIFF and load questions
+    function initializeLiff() {
+        liff.init({
+            liffId: liffId 
+        }).then(() => {
+            if (liff.isLoggedIn()) {
+                liff.getProfile().then(profile => {
+                    lineUID = profile.userId;
+                    const displayName = profile.displayName; 
+                    document.getElementById('username').value = displayName; 
+                    loadQuestions();
+                  checkDailySubmission()
+                }).catch(err => console.error(err));
+            } else {
+                liff.login();
+            }
+        }).catch(err => console.error(err));
+    }
+
+    // Load questions from JSON URL
+    function loadQuestions() {
+        $.LoadingOverlay("show", { text: "กำลังโหลดคำถาม..." });
+
+        fetch(fetchUrl) 
+            .then(response => response.json())
+            .then(data => {
+                let allQuestions = data.map((item, index) => ({
+                    numb: index + 1,
+                    question: item["โจทย์"],
+                    image: item["Image"], 
+                    options: [item["ตัวเลือก 1"], item["ตัวเลือก 2"], item["ตัวเลือก 3"], item["ตัวเลือก 4"]],
+                    answer: item["เฉลย"]
+                }));
+
+                // Shuffle the questions array
+                allQuestions = shuffleArray(allQuestions);
+
+                questions = allQuestions.slice(0, Question_LIMIT);
+
+                $.LoadingOverlay("hide");
+            })
+            .catch(error => {
+                console.error('Error fetching questions:', error);
+                Swal.fire({
+                    title: 'เกิดข้อผิดพลาด!',
+                    text: 'ไม่สามารถโหลดคำถามได้ กรุณาลองใหม่อีกครั้ง',
+                    icon: 'error',
+                    confirmButtonText: 'ตกลง'
+                });
+                $.LoadingOverlay("hide");
+            });
+    }
+
+    // Function to shuffle an array
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Start Quiz Event
+    document.querySelectorAll('.restart').forEach(button => {
+        button.addEventListener('click', function() {
+            userName = document.getElementById('username').value.trim();
+            if (userName === "") {
+                Swal.fire('กรุณากรอกชื่อ-สกุล');
+                return;
+            }
+
+            // Reset quiz box and result box visibility
+            document.querySelector('.result_box').style.display = 'none';
+            document.querySelector('.quiz_box').style.display = 'block'; 
+            document.querySelector('.container').style.display = 'none';  
+
+            // Reset counters and timers
+            que_count = 0;
+            userScore = 0;
+            clearInterval(counter);
+            clearInterval(counterLine);
+
+            // Start the quiz
+            startQuiz();
+        });
+    });
+
+    function startQuiz() {
+        que_count = 0;
+        userScore = 0;
+        showQuestions(que_count);
+        queCounter(que_count + 1);
+        startTimer(TIME_LIMIT);  
+        startTimerLine(0);
+    }
+
+    // Function to display questions
+    function showQuestions(index){
+        answered = false; // Reset the answered flag for the new question
+        const que_text = document.querySelector(".que_text");
+        const questionImage = document.getElementById("question-image");
+
+        que_text.innerHTML = `<span>${questions[index].question}</span>`;
+        
+        if (questions[index].image) {
+            questionImage.src = questions[index].image;
+            questionImage.style.display = "block";
+        } else {
+            questionImage.style.display = "none";
+        }
+
+        const option_list = document.querySelector(".option_list");
+        option_list.innerHTML = ''; // Clear previous options
+
+        // Display multiple-choice options as clickable buttons
+        questions[index].options.forEach(option => {
+            const optionBtn = document.createElement("button");
+            optionBtn.classList.add("btn", "btn-outline-primary", "d-block", "w-100", "mb-2");
+            optionBtn.textContent = option;
+            option_list.appendChild(optionBtn);
+
+            optionBtn.addEventListener('click', function() {
+                if (!answered) {  // Only allow answering once
+                    optionSelected(optionBtn, option);
+                }
+            });
+        });
+
+        document.querySelector('.next_btn').style.display = 'none'; // Hide "Next" button initially
+    }
+
+    function optionSelected(answerBtn, userAnswer){
+        clearInterval(counter);
+        clearInterval(counterLine);
+        answered = true; // Mark the question as answered
+        let correctAnswer = questions[que_count].answer;
+
+        if(userAnswer === correctAnswer){
+            userScore++;
+            answerBtn.classList.add("bg-success", "text-white");
+        } else {
+            answerBtn.classList.add("bg-danger", "text-white");
+        }
+
+        document.querySelector('.next_btn').style.display = 'block'; // Show "Next" button after answering
+    }
+
+    // Next question button event
+    document.querySelector('.next_btn').addEventListener('click', function() {
+        if (que_count < questions.length - 1) {
+            que_count++;
+            showQuestions(que_count);
+            queCounter(que_count + 1);
+            startTimer(TIME_LIMIT);  // Reset timer
+            startTimerLine(0);  // Reset progress bar
+        } else {
+            showResult();
+        }
+    });
+
+    // Show the result box when the quiz is done
+function showResult(){
+    document.querySelector('.quiz_box').style.display = "none";
+    document.querySelector('.result_box').style.display = "block";
+
+    const scoreText = document.querySelector(".score_text");
+    scoreText.innerHTML = userScore > 3
+        ? `<h4>ยอดเยี่ยม! 🎉 </h4> <p>${userName} คุณทำได้ ${userScore}/${questions.length} คะแนน</p>`
+        : userScore > 1
+        ? `<h4>เก่งมาก 😎 </h4><p>${userName} คุณทำได้ ${userScore}/${questions.length} คะแนน</p>`
+        : `<h4>เสียใจด้วย 😐 </h4><p> ${userName} คุณทำได้ ${userScore}/${questions.length} คะแนน</p>`;
+
+    saveQuizResults(userName, userScore, questions.length);
+
+    document.querySelector('.share_score').addEventListener('click', function() {
+        shareScore(userName, userScore, questions.length);
+    });
+}
+
+    // Function to save quiz results
+    function saveQuizResults(userName, userScore, totalQuestions) {
+        $.LoadingOverlay("show", { text: "กำลังบันทึกข้อมูล..." });
+
+      
+        const payload = {
+            action: "addScoreAndUpdateCoins",
+            name: userName,
+            score: userScore,
+            total: totalQuestions,
+            lineUID: lineUID
+        };
+
+        fetch(webAppUrl, {  // Use global webAppUrl
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        }).then(() => {
+            $.LoadingOverlay("hide");
+          
+        // Store the current date as the last submission date
+        const today = new Date().toISOString().split('T')[0];
+        localStorage.setItem('lastSubmission', today);
+          
+          
+        Swal.fire({
+            icon: 'success',
+            title: 'บันทึกข้อมูลสำเร็จ',
+            text: 'ข้อมูลถูกบันทึกลงใน Google Sheets เรียบร้อยแล้ว.'
+        });
+    }).catch(error => {
+        console.error('Error:', error);
+        $.LoadingOverlay("hide");
+        Swal.fire({
+            icon: 'error',
+            title: 'บันทึกข้อมูลไม่สำเร็จ',
+            text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล.'
+        });
+    });
+    }
+
+    // Timer for the quiz
+    function startTimer(time){
+        counter = setInterval(() => {
+            document.querySelector(".timer_sec").textContent = time < 10 ? "0" + time : time;
+            time--;
+            if (time < 0) {
+                clearInterval(counter);
+                if (!answered) {
+                    markAsIncorrect();
+                }
+            }
+        }, 1000);
+    }
+
+    function markAsIncorrect() {
+        answered = true; // Mark the question as answered
+        document.querySelectorAll(".btn-outline-primary").forEach(option => {
+            if (option.textContent === questions[que_count].answer) {
+                option.classList.add("bg-success", "text-white");
+            }
+        });
+        document.querySelector('.next_btn').style.display = 'block';
+    }
+
+    // Progress bar timer
+    function startTimerLine(time){
+        const quizBoxWidth = document.querySelector('.quiz_box').clientWidth;
+
+        counterLine = setInterval(() => {
+            time += quizBoxWidth / (TIME_LIMIT * 1000 / 29);
+            document.querySelector(".time_line").style.width = `${time}px`;
+            if (time >= quizBoxWidth) {
+                clearInterval(counterLine);
+            }
+        }, 29);
+    }
+
+    // Question counter display
+    function queCounter(index){
+        document.querySelector(".total_que").innerHTML = `<span><p>ข้อที่ ${index} / ${questions.length}</span>`;
+    }
+
+    // Function to share quiz score via LIFF
+    function shareScore(name, score, total) {
+        const flexMessage = {
+            "type": "flex",
+            "altText": "Quiz Score",
+            "contents": {
+                "type": "bubble",
+                "hero": {
+                    "type": "image",
+                    "url": "https://iili.io/dhSjkru.jpg",
+                    "size": "full",
+                    "aspectRatio": "20:13",
+                    "aspectMode": "cover"
+                },
+                "body": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "spacing": "md",
+                    "contents": [
+                        {
+                            "type": "text",
+                            "text": "ผลการทำแบบทดสอบ",
+                            "size": "xl",
+                            "weight": "bold"
+                        },
+                        {
+                            "type": "box",
+                            "layout": "vertical",
+                            "spacing": "sm",
+                            "contents": [
+                                {
+                                    "type": "box",
+                                    "layout": "baseline",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "ชื่อ-นามสกุล :",
+                                            "weight": "bold",
+                                            "margin": "sm",
+                                            "flex": 0
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": name,
+                                            "size": "sm",
+                                            "align": "end",
+                                            "color": "#aaaaaa"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "baseline",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "คะแนนที่ได้ :",
+                                            "weight": "bold",
+                                            "margin": "sm",
+                                            "flex": 0
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": `${score}/${total}`,
+                                            "size": "sm",
+                                            "align": "end",
+                                            "color": "#aaaaaa"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "text",
+                            "text": "กิจกรรม Daily Quiz , พัฒนาโดยครูสิทธิชาติ สิทธิ",
+                            "wrap": true,
+                            "color": "#aaaaaa",
+                            "size": "xxs",
+                            "margin": "lg"
+                        }
+                    ]
+                },
+                "footer": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                        {
+                            "type": "button",
+                            "style": "primary",
+                            "color": "#905c44",
+                            "margin": "xxl",
+                            "action": {
+                                "type": "uri",
+                                "label": "ดูตารางคะแนน",
+                                "uri": "https://script.google.com/macros/s/AKfycbxdOnCIe8WOl5pcIPEVJgU4uM9uWQ0XyVVEZm2eTegHcHRP13EL4YRS5MqRVmDdgJqx/exec"
+                            }
+                        }
+                    ]
+                }
+            }
+        };
+
+        // Open the share target picker
+        liff.shareTargetPicker([flexMessage])
+            .then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'แชร์คะแนนสำเร็จ!',
+                    text: 'คะแนนของคุณถูกแชร์เรียบร้อยแล้ว.'
+                });
+            })
+            .catch(err => {
+                console.error('Error sharing score:', err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'แชร์คะแนนไม่สำเร็จ',
+                    text: 'เกิดข้อผิดพลาดในการแชร์คะแนนของคุณ.'
+                });
+            });
+    }
+
+  
+// Check if the user has already submitted the quiz today
+function checkDailySubmission() {
+    const lastSubmission = localStorage.getItem('lastSubmission');
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+
+    fetch('https://opensheet.elk.sh/1ccAKIMzy4p4yicqq0qjZOTV_Xf7QVZrhsajIykGJKxU/Score')
+        .then(response => response.json())
+        .then(data => {
+            const userSubmission = data.find(entry => entry.UID === lineUID && entry.Date === today);
+
+            if (lastSubmission === today || userSubmission) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'คุณได้ส่งคำตอบวันนี้แล้ว',
+                    text: 'โปรดกลับมาอีกครั้งในวันพรุ่งนี้',
+                    confirmButtonText: 'ตกลง'
+                });
+                document.querySelector('.restart').disabled = true; // Disable the restart button
+            } else {
+                document.querySelector('.restart').disabled = false; // Enable the restart button
+            }
+        })
+        .catch(error => {
+            console.error('Error checking submission:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'เกิดข้อผิดพลาด',
+                text: 'ไม่สามารถตรวจสอบสถานะการส่งคำตอบได้',
+                confirmButtonText: 'ตกลง'
+            });
+        });
+}
+  
+  
+</script>
+
+<footer class="text-center text-lg-start bg-light text-muted" style="  position: static;left: 0;bottom: 0;width: 100%;">
+    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+        © 2024 Copyright  | พัฒนาโดยครูสิทธิชาติ สิทธิ<br/>
+    </div>
+</footer>
+
+</body>
+</html>

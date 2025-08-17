@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Mini Blockchain System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+
+    <!-- Sanwithz Style -->
+    <link rel="stylesheet" href="/style.css" />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+
+    <!-- Sweet Alert -->
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ 
+    <!-- Loading Overlay -->
+    <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
+
+
+    <!-- LIFF SDK --> 
+    <script  src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+      
+
+    <!-- html5 qrcode --> 
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  
+
+</head>
+<body style="font-size: 12px;">
+  
+  <main class="container mt-4"> 
+
+    
+    <!-- User Profile Section -->
+<div class="text-center">
+  <img id="profileImage" style="width: 120px;" src="https://placehold.co/80x80" alt="Profile" class="rounded-circle">
+  <h4 id="userNameDisplay" class="mt-2">User Name</h4>
+  <p class="mb-3"><b>UID: </b><span id="userId">123456789</span> 
+    <button class="btn btn-warning btn-sm text-dark" onclick="copyText('userId')">
+      <i class="fa-solid fa-copy"></i>
+    </button>
+    <br/>
+    <button class="btn btn-primary btn-sm text-white mt-2" onclick="showQrCode()">
+      <i class="fa-solid fa-qrcode"></i> My QR Code
+    </button>
+
+    <button class="btn btn-primary btn-sm mt-2" onclick="fetchProfile()">
+      <i class="fa-solid fa-arrows-rotate"></i>
+    </button>
+
+
+  </p>
+</div>
+
+    
+    
+    
+    <!-- Registration Section -->
+<div class="container">    
+<div id="registrationSection" class="row text-center d-none  list">
+<h4>ยินดีต้อนรับ, คุณ <span id="regUserNameDisplay">User</span></h4>
+<p>กรุณาลงทะเบียนก่อนเข้าใช้งาน</p>
+<button class="btn btn-lg btn-success" onclick="registerAccount()">ลงทะเบียนใช้งาน</button>
+</div>
+</div>
+    
+
+<!-- Loan and Stake Details Section -->
+<div id="transactionDetails" class=" mt-4 d-none">
+  <h4>รายละเอียดธุรกรรม</h4>
+  <div class="alert alert-info" id="transactionMessage"></div>
+</div>
+    
+    
+    
+    
+    
+    
+<!-- Tabs -->
+    
+<div class="nav nav-tabs mt-2" id="navTab">
+  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab1"> <i class="fa-solid fa-house"></i> Home</button>
+  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab2"> <i class="fa-solid fa-file-contract"></i> Transaction</button>
+  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab3"><i class="fa-solid fa-gamepad"></i> Daily Quiz</button>
+  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab4"><i class="fa-solid fa-trophy"></i> Leader</button>  
+</div>
+    
+    
+    
+    
+    
+ <!-- Data tabs -->   
+<div class="tab-content">
+  
+  <!--  Tab1 -->
+  <div class="tab-pane fade show active" id="tab1">
+  
+      <!-- Services Section -->
+  
+<div class="row row-cols-2 g-2 text-center mt-3" id="servicesSection">
+  <div class="col">
+    <button class="btn btn-light btn-grid" onclick="fetchAccount()">
+      <img src="https://lh3.googleusercontent.com/d/1p1dBB_5hIkagRkQOHP_TsLe-qXNdWMCO" alt="Balance">
+      <p>ยอดเหรียญ<br>ในบัญชี</p>
+    </button>
+  </div>
+  <div class="col">
+    <button class="btn btn-light btn-grid" data-bs-toggle="modal" data-bs-target="#transferModal">
+      <img src="https://lh3.googleusercontent.com/d/1Wgkp1Ak1dzVOHBhBV7I1NludsqgKAhEb" alt="Transfer">
+      <p>โอนเหรียญ<br>ให้ผู้อื่น</p>
+    </button>
+  </div>
+  <div class="col">
+    <button class="btn btn-light btn-grid" data-bs-toggle="modal" data-bs-target="#mintModal">
+      <img src="https://lh3.googleusercontent.com/d/1gn0dp6Gf6OOl-GxYkFazh9ybjhez460j" alt="Mint">
+      <p>กรอกรหัส<br>รับเหรียญ</p>
+    </button>
+  </div>
+
+
+  <div class="col">
+    <button class="btn btn-light btn-grid" data-bs-toggle="modal" data-bs-target="#swapModal">
+      <img src="https://lh3.googleusercontent.com/d/12eYWKYLL-BfjfYQLaCTwL8zOOEoyoBaz" alt="Swap">
+      <p>แลกเหรียญ<br>เป็น NFT</p>
+    </button>
+  </div>
+  
+  <!-- <div class="col">
+  <button class="btn btn-light btn-grid" data-bs-toggle="modal" data-bs-target="#loanModal">
+    <img src="https://lh3.googleusercontent.com/d/1Dj9Ug24-t90-GIgqq-nOo12TZsG96Bfb" alt="Loan">
+    <p>กู้ยืมเหรียญ<br>จ่ายดอกเบี้ย</p>
+  </button>
+</div> -->
+  
+<!--   <div class="col">
+    <button class="btn btn-light btn-grid" data-bs-toggle="modal" data-bs-target="#stakeModal">
+      <img src="https://lh3.googleusercontent.com/d/1d0fdPw3sX4ZFnNNf5O3TzIxNrroPhVdl" alt="Stake">
+      <p>ฝากเหรียญ<br>รับดอกเบี้ย</p>
+    </button>
+  </div> -->
+</div>
+
+      
+<!-- NFT Display Section -->
+<div id="nftSection" class="mt-4">
+  <h4>Your NFTs</h4>
+  <div id="nftGallery" class="row row-cols-3 row-cols-md-3 g-2"></div>
+</div>
+
+    <br/>
+    
+<div class="col" id="marketSection" >
+  <button class="btn btn-light btn-grid" data-bs-toggle="modal" data-bs-target="#marketplaceModal">
+    <h4><i class="fa-solid fa-shop"></i> ตลาดซื้อขาย NFTs</h4>
+  </button>
+</div>
+
+    
+  
+  </div>
+  
+  
+  
+<!--  Tab2 -->
+  <div class="tab-pane fade" id="tab2">
+  
+  
+    
+<!-- Loaner Details Section -->
+<!-- <div id="loanerDetails" class="mt-4 list d-none">
+  <h4>ข้อมูลการกู้เหรียญ และดอกเบี้ย</h4>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover align-middle" id="loanerTable">
+      <thead class="table-primary">
+        <tr>
+          <th>จำนวน</th>
+          <th>ดอกเบี้ย</th>
+          <th>วันจ่ายดอกเบี้ย</th>
+          <th>สถานะ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="4" class="text-center">ไม่มีข้อมูลการกู้</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Staker Details Section -->
+<!-- <div id="stakerDetails" class="mt-4 list d-none">
+  <h4>ข้อมูลการฝากเหรียญ และดอกเบี้ย</h4>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover align-middle" id="stakerTable">
+      <thead class="table-primary">
+        <tr>
+          <th>จำนวน</th>
+          <th>ดอกเบี้ย</th>
+          <th>วันรับดอกเบี้ย</th>
+          <th>สถานะ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="4" class="text-center">ไม่มีข้อมูลการฝากเหรียญ</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>  -->
+    
+  
+    
+<!-- Transaction Section -->
+<div class="mt-4 list">
+  <h4>ประวัติการทำธุรกรรม</h4>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover align-middle" id="loggerTable">
+      <thead class="table-primary">
+        <tr>
+          <th>Timestamp</th>
+          <th>Action</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="3" class="text-center">Loading...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="pagination" class="mt-3 d-flex justify-content-center"></div>
+  
+  
+  </div>
+
+  
+    <!--  Tab3 -->
+     <div class="tab-pane fade" id="tab3">
+    
+<center>
+  <button class="btn btn-success btn-lg mt-4" onclick="window.location.href='https://first-florentine-barge.glitch.me/quiz.html';">
+    เริ่มการ Learn to Earn
+</button>
+</center>
+
+       </div>
+  
+  
+  
+  
+    <!--  Tab4 -->
+     <div class="tab-pane fade" id="tab4">
+    
+<center>
+  <button class="btn btn-success btn-lg mt-4" onclick="window.location.href='https://first-florentine-barge.glitch.me/Leaderboard.html';">
+    ดูตารางยอดเหรียญรวม / ยอดรวมทั้งหมด / เหรียญคงเหลือให้ขุด
+</button>
+</center>
+
+       </div>
+  
+<!-- End tab-content -->
+</div> 
+    
+  
+    
+
+  
+    </main>
+  
+
+  <!-- Transfer Money Modal -->
+    <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">โอนเหรียญ (Transfer Coin)</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="transferForm">
+                        <div class="mb-3">
+                            <label for="toUID" class="form-label">UID ของผู้รับ</label>
+                            <input type="text" class="form-control" id="toUID" placeholder="Enter recipient UID">
+                            <button type="button" class="btn btn-sm btn-primary mt-2" onclick="startQrScanner()">Scan QR</button>
+                        </div>
+                        <div id="qr-scanner" class="mt-3" style="display: none;">
+                            <div id="reader" style="width: 100%;"></div>
+                            <button class="btn btn-sm btn-danger mt-2" onclick="stopQrScanner()">Stop Scanner</button>
+                        </div>
+                        <div class="mb-3 mt-3">
+                            <label for="transferAmount" class="form-label">จำนวนเหรียญที่ต้องการโอน</label>
+                            <input type="number" class="form-control" id="transferAmount" placeholder="Enter amount">
+                        </div>
+                      <button type="button" class="btn btn-lg btn-primary w-100 mt-2" onclick="submitTransfer()">Transfer</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal">Close</button>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+  
+  
+
+<!-- Mint Coins Modal -->
+<div class="modal fade" id="mintModal" tabindex="-1" aria-labelledby="mintModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="mintModalLabel">ขุดเหรียญ (Mint Coins)</h5>
+      </div>
+      <div class="modal-body">
+        <form id="mintForm">
+          <div class="mb-3">
+            <label for="mintAmount" class="form-label">จำนวนเหรียญที่จะได้รับ</label>
+            <input type="number" class="form-control" id="mintAmount" value="50" placeholder="Enter amount" readonly>
+          </div>
+          <div class="mb-3">
+            <label for="mintPassword" class="form-label">Mint Token</label>
+            <input type="text" class="form-control" id="mintPassword" placeholder="Enter Mint Code">
+          </div>
+        </form>
+        <button type="button" class="btn btn-sm btn-primary mt-2" onclick="startMintQrScanner()">Scan QR Code</button>
+                        <div id="mint-qr-scanner" class="mt-3" style="display: none;">
+                            <div id="mint-reader" style="width: 100%;"></div>
+                            <button class="btn btn-sm btn-danger mt-2" onclick="stopMintQrScanner()">Stop Scanner</button>
+                        </div>        
+        
+        <button type="button" class="btn btn-lg btn-primary w-100 mt-5" onclick="submitMint()">Mint</button>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal">Close</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+  
+  <!-- Loan Modal -->
+<div class="modal fade" id="loanModal" tabindex="-1" aria-labelledby="loanModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="loanModalLabel">กู้ยืมเหรียญ (Loan Coins)</h5>
+      </div>
+      <div class="modal-body">
+        <form id="loanForm">
+          <div class="mb-3">
+            <label for="loanAmount" class="form-label">จำนวนเหรียญที่ต้องการกู้</label>
+            <input type="number" class="form-control" id="loanAmount" min ="25" placeholder="กรอกจำนวน ขั้นต่ำ 25 เหรียญ">
+          </div>
+          <div class="mb-3">
+            <label for="loanDuration" class="form-label">ระยะเวลากู้ (วัน)</label>
+            <input type="number" class="form-control" id="loanDuration" value="30" readonly>
+          </div>
+          <button type="button" class="btn btn-lg btn-primary w-100 mt-2" onclick="submitLoan()">Loan</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal">Close</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Swap Modal -->
+<div class="modal fade" id="swapModal" tabindex="-1" aria-labelledby="swapModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="swapModalLabel">แลกเปลี่ยนเหรียญ (Swap Coins)</h5>
+      </div>
+      <div class="modal-body">
+        <!-- Warning Message -->
+        <div id="swapWarning" class="alert alert-warning d-none" role="alert">
+          <i class="fa-solid fa-exclamation-triangle"></i> ยอดคงเหลือของคุณไม่เพียงพอที่จะแลก NFT ได้<br/>(ต้องมีอย่างน้อย 3,000 เหรียญ)
+        </div>
+
+        <form id="swapForm">
+          <div class="mb-3">
+            <label for="swapAmount" class="form-label">จำนวนเหรียญที่ต้องใช้เพื่อแลก NFTs</label>
+            <input type="number" value="750" class="form-control" id="swapAmount" readonly>
+          </div>
+          <div class="mb-3">
+            <label for="swapTo" class="form-label">เลือกเผ่าของ NFTs</label>
+            <select class="form-select" id="swapTo">
+              <option value="bug">Bug</option>
+              <option value="bird">Bird</option>
+              <option value="fish">Fish</option>
+              <option value="plant">Plant</option>
+              <option value="reptile">Reptile</option>
+            </select>
+          </div>
+
+          <button type="button" class="btn btn-lg btn-primary w-100 mt-2" id="swapButton" onclick="submitSwap()" disabled>Swap</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal">Close</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+  
+  
+
+<!-- Stake Modal -->
+<div class="modal fade" id="stakeModal" tabindex="-1" aria-labelledby="stakeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="stakeModalLabel">ฝากเหรียญ (Stake Coins)</h5>
+      </div>
+      <div class="modal-body">
+        <form id="stakeForm">
+          <div class="mb-3">
+            <label for="stakeAmount" class="form-label">จำนวนเหรียญที่ต้องการฝาก</label>
+            <input type="number" class="form-control" id="stakeAmount" min ="25" placeholder="กรอกจำนวน ขั้นต่ำ 25 เหรียญ">
+          </div>
+          <div class="mb-3">
+            <label for="stakeDuration" class="form-label">ระยะเวลา (วัน)</label>
+            <input type="number" class="form-control" id="stakeDuration" value="35" readonly>
+          </div>
+          
+          <button type="button" class="btn btn-lg btn-primary w-100 mt-2" onclick="submitStake()">Stake</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal">Close</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+  
+  
+<!-- Transfer NFT Modal -->
+<div class="modal fade" id="transferNftModal" tabindex="-1" aria-labelledby="transferNftModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="transferNftModalLabel">Transfer NFTs</h5>
+      </div>
+      <div class="modal-body">
+        <form id="transferNftForm">
+          <div class="mb-3">
+            <label for="recipientUID" class="form-label">Recipient UID</label>
+            <input type="text" class="form-control" id="recipientUID" placeholder="Enter recipient UID" required>
+            <button type="button" class="btn btn-sm btn-primary mt-2" onclick="startNftQrScanner()">Scan QR</button>
+          </div>
+          <div id="nft-qr-scanner" class="mt-3" style="display: none;">
+            <div id="nft-reader" style="width: 100%;"></div>
+            <button class="btn btn-sm btn-danger mt-2" onclick="stopNftQrScanner()">Stop Scanner</button>
+          </div>
+          <div class="mb-3 mt-2">
+            <label for="selectedNftUrl" class="form-label">Selected NFTs</label>
+            <input type="text" class="form-control" id="selectedNftUrl" readonly>
+          </div>
+          <div class="mb-3 text-center">
+            <img id="selectedNftImage" src="" alt="NFT Preview" style="max-width: 350px; display: none;">
+          </div>
+          
+          <button type="button" class="btn btn-primary w-100 mt-2" onclick="submitNftTransfer()">Transfer</button>
+          
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+ <!--  NFT Marketplace Modal -->
+  <div class="modal fade" id="marketplaceModal" tabindex="-1" aria-labelledby="marketplaceModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="marketplaceModalLabel">NFTs Marketplace </h5>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+<div class="col-md-8">
+  <img id="nftHeader" src="https://lh3.googleusercontent.com/d/1TX4S-jTZIdr3ihu2YiLNTaUQ25kT8dvs" alt="NFTHeader" class="img-fluid" style="max-width: 100%">
+  
+  <h4 class="mt-3">NFTs ทั้งหมดที่วางขายในตลาด</h4>
+  <ul id="marketplaceListing" class="list-group mt-2"></ul>
+</div>
+
+<div class="col-md-4 mt-3">
+  <h4>NFTs ที่คุณกำลังขาย</h4>
+  <ul id="userListings" class="list-group mt-2"></ul>
+</div>
+
+          <br/>
+          <div class="container" >   
+    <button class="btn btn-primary btn-sm mt-3 " onclick="fetchMarketplace()">
+      <i class="fa-solid fa-arrows-rotate"></i>
+    </button>
+            </div>
+          
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="listNFTModal" tabindex="-1" aria-labelledby="listNFTModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="listNFTModalLabel">List NFT for Sale</h5>
+      </div>
+      <div class="modal-body">
+        <form id="listNFTForm">
+          <div class="mb-3 text-center">
+            <img id="nftImagePreview" src="" alt="NFT Preview" class="img-fluid" style="max-width: 300px; display: none;">
+          </div>
+          <div class="mb-3">
+            <label for="nftID" class="form-label">NFT URL</label>
+            <input type="text" class="form-control" id="nftID" readonly required>
+          </div>
+          <div class="mb-3">
+            <label for="userUID" class="form-label">User UID</label>
+            <input type="text" class="form-control" id="userUID" readonly required>
+          </div>
+          <div class="mb-3">
+            <label for="nftPrice" class="form-label">Price (Coins)</label>
+            <input type="number" class="form-control" id="nftPrice" placeholder="Enter price" min="1" required>
+          </div>
+          <button type="button" class="btn btn-primary w-100" onclick="submitNFTListing()">List NFT to Marketplace</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+  
+  
+  <script>
+    const liffId = "2006600165-e5pO3DKE"; // Replace with your LIFF ID
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbxZe6gmwRyN7JFNB0KXNOyxPWp9oubIxOAaA23Z7cJzWB4_8jehBTu4rdmP_bNLx0fFaQ/exec"; 
+    let userUID = "";
+
+    // Initialize LIFF and fetch profile
+let SPECIAL_ACCOUNTS = {};
+
+$(document).ready(() => {
+  // Fetch special accounts from the server
+  fetch(`${scriptUrl}?action=getSpecialAccounts`, { method: "GET" })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        SPECIAL_ACCOUNTS = data.accounts;
+      } else {
+        Swal.fire("Error", "Failed to fetch special accounts.", "error");
+      }
+    })
+    .catch(err => {
+      console.error("Failed to fetch special accounts:", err);
+      Swal.fire("Error", "Unable to fetch special accounts.", "error");
+    });
+
+  // Initialize LIFF and other features
+  liff.init({ liffId }).then(() => {
+    if (!liff.isLoggedIn()) {
+      liff.login();
+    } else {
+      fetchProfile();
+    }
+  }).catch(err => {
+    console.error("LIFF Initialization failed", err);
+    Swal.fire("Error", "Failed to initialize LIFF.", "error");
+  });
+});
+
+
+// Fetch Profile from LINE LIFF
+function fetchProfile() {
+  liff.getProfile().then(profile => {
+    userUID = profile.userId;
+    $("#profileImage").attr("src", profile.pictureUrl);
+    $("#userNameDisplay").text(profile.displayName);
+    $("#userId").text(userUID);
+    $("#regUserNameDisplay").text(profile.displayName);
+    fetchAccount();
+    fetchNFTs();
+    fetchFilteredLogger(); // Fetch transaction logs
+    fetchLoanerDetails();  // Fetch loaner details
+    fetchStakerDetails();  // Fetch staker details
+  }).catch(err => {
+    console.error("Failed to fetch profile:", err);
+    Swal.fire("Error", "Unable to fetch profile details.", "error");
+  });
+}
+
+
+
+    
+    
+
+// Fetch Account Balance
+function fetchAccount() {
+$.LoadingOverlay("show", {
+image: "",
+fontawesome: "fa fa-spinner fa-spin",
+text: "กำลังโหลดข้อมูล..."
+})
+  fetch(`${scriptUrl}?action=getAccount&uid=${userUID}`, { method: "GET" })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      $.LoadingOverlay("hide");
+
+      if (data.success) {
+        // Format balance with thousand separators
+        const formattedBalance = parseFloat(data.account.balance).toLocaleString('en-US');
+
+        // Show user profile and services
+        $("#profileSection").removeClass("d-none");
+        $("#servicesSection").removeClass("d-none");
+        $("#registrationSection").addClass("d-none");
+        $("#nftSection").removeClass("d-none");
+        $("#marketSection").removeClass("d-none");
+        $("#navTab").removeClass("d-none");
+
+Swal.fire({
+  title: `สวัสดีคุณ, ${data.account.name}`,
+  text: `ยอดคงเหลือ : ${formattedBalance} เหรียญ`,
+  imageUrl: "https://lh3.googleusercontent.com/d/1eT3MO_1wcYHXJ2K1tGCC3dZ4I_HGu6UR",
+  imageWidth: 100,
+  imageHeight: 100,
+  imageAlt: "Custom image",
+  confirmButtonText: "ปิด"
+});
+
+      } else {
+        // No account found, show registration section
+        $("#profileSection").removeClass("d-none");
+        $("#registrationSection").removeClass("d-none");
+        $("#servicesSection").addClass("d-none");
+        $("#nftSection").addClass("d-none");
+        $("#marketSection").addClass("d-none");
+        $("#navTab").addClass("d-none");
+        
+
+        // Show error alert
+        Swal.fire("ไม่พบบัญชี", "กรุณาลงทะเบียนก่อนเข้าใช้งาน", "info");
+      }
+    })
+    .catch(err => {
+      $.LoadingOverlay("hide");
+      console.error("Fetch Account Error:", err);
+
+      // General error alert
+      Swal.fire("Error", `Failed to fetch account: ${err.message}`, "error");
+    });
+}
+
+
+    // Register Account
+    function registerAccount() {
+      const payload = { action: "registerAccount", uid: userUID, name: $("#regUserNameDisplay").text(), balance: 0 };
+      $.LoadingOverlay("show", {
+image: "",
+fontawesome: "fa fa-spinner fa-spin",
+text: "กำลังบันทึกข้อมูล..."
+})
+      fetch(scriptUrl, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        mode: "no-cors",
+      }).then(() => {
+        $.LoadingOverlay("hide");
+        Swal.fire("สำเร็จ", "สร้างบัญชีเรียบร้อย เริ่มกันเลย!", "success").then(() => {
+          fetchAccount();
+        });
+      }).catch(err => {
+        $.LoadingOverlay("hide");
+        Swal.fire("Error", "Failed to register account.", "error");
+      });
+    }
+
+    
+    
+    
+    
+// QR code reader for mint
+let mintQrScanner;
+
+function startMintQrScanner() {
+  $("#mint-qr-scanner").show();
+  if (!mintQrScanner) {
+    mintQrScanner = new Html5Qrcode("mint-reader");
+  }
+
+  mintQrScanner
+    .start(
+      { facingMode: "environment" }, // Use back camera
+      { fps: 10, qrbox: 250 },
+      (decodedText) => {
+        console.log("QR Code Decoded:", decodedText); // Debug log
+        try {
+          // Parse the scanned QR code text as JSON
+          const mintData = JSON.parse(decodedText);
+
+          // Validate the structure of the JSON
+          if (mintData.amount && mintData.code) {
+            // Populate the Mint form with the extracted data
+            $("#mintAmount").val(mintData.amount);
+            $("#mintPassword").val(mintData.code);
+
+            Swal.fire("QR Code Scanned", `Amount: ${mintData.amount}, Code: ${mintData.code}`, "success");
+
+            // Stop the scanner after successful scanning
+            stopMintQrScanner();
+          } else {
+            throw new Error("Invalid QR Code structure");
+          }
+        } catch (error) {
+          console.error("QR Code Parsing Error:", error);
+          Swal.fire("Invalid QR Code", "The QR code is not in the expected format.", "error");
+        }
+      },
+      (errorMessage) => {
+        console.warn("Mint QR Scan Error:", errorMessage); // Log scan errors
+      }
+    )
+    .catch((err) => {
+      console.error("Mint QR Scanner Initialization Error:", err);
+      Swal.fire("Scanner Error", "Failed to initialize QR scanner.", "error");
+    });
+}
+
+function stopMintQrScanner() {
+  $("#mint-qr-scanner").hide();
+  if (mintQrScanner) {
+    mintQrScanner.stop().catch((err) => console.error("Mint QR Scanner Stop Error:", err));
+  }
+}
+
+
+    
+    
+// QR code reader for Transfer
+
+    let qrScanner;
+
+    function startQrScanner() {
+        $("#qr-scanner").show();
+        if (!qrScanner) {
+            qrScanner = new Html5Qrcode("reader");
+        }
+        qrScanner.start(
+            { facingMode: "environment" }, // Use the back camera
+            { fps: 10, qrbox: 250 },
+            (decodedText) => {
+                $("#toUID").val(decodedText); // Set the decoded UID
+                stopQrScanner();
+                Swal.fire("QR Code Scanned", `UID: ${decodedText}`, "success");
+            },
+            (errorMessage) => {
+                console.error("QR Scan Error:", errorMessage);
+            }
+        ).catch((err) => {
+            console.error("QR Scanner Error:", err);
+        });
+    }
+
+    function stopQrScanner() {
+        $("#qr-scanner").hide();
+        if (qrScanner) {
+            qrScanner.stop().catch((err) => console.error("QR Scanner Stop Error:", err));
+        }
+    }
+    
+    
+    
+    // Transfer Money
+function submitTransfer() {
+  const toUID = $("#toUID").val();
+  const amount = parseFloat($("#transferAmount").val());
+
+  if (!toUID || isNaN(amount)) {
+    Swal.fire("Error", "Invalid input.", "error");
+    return;
+  }
+
+  const payload = { action: "transferAmount", fromUID: userUID, toUID, amount };
+  console.log("Transfer Payload:", payload); // Debug log
+
+$.LoadingOverlay("show", {
+image: "",
+fontawesome: "fa fa-spinner fa-spin",
+text: "กำลังบันทึกข้อมูล..."
+})
+  fetch(scriptUrl, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    mode: "no-cors",
+  })
+    .then(() => {
+      $.LoadingOverlay("hide");
+      Swal.fire("สำเร็จ", "โอนเหรียญเรียบร้อย", "success");
+      $("#transferModal").modal("hide");
+    })
+    .catch(err => {
+      $.LoadingOverlay("hide");
+      Swal.fire("Error", "Failed to connect to the server.", "error");
+      console.error("Transfer Error:", err); // Debug log
+    });
+}
+
+
+function submitMint() {
+  const amount = parseFloat($("#mintAmount").val());
+  const password = $("#mintPassword").val();
+
+  if (isNaN(amount) || amount <= 0) {
+    Swal.fire("Error", "Please enter a valid amount.", "error");
+    return;
+  }
+
+  if (!password) {
+    Swal.fire("Error", "กรุณากรอกรหัส (Mint Code)", "error");
+    return;
+  }
+
+  $.LoadingOverlay("show", {
+    image: "",
+    fontawesome: "fa fa-spinner fa-spin",
+    text: "กำลังบันทึกข้อมูล..."
+  });
+
+  fetch("https://opensheet.elk.sh/1ccAKIMzy4p4yicqq0qjZOTV_Xf7QVZrhsajIykGJKxU/Passwords")
+    .then(response => response.json())
+    .then(data => {
+      const passwordEntry = data.find(entry => entry.PASSWORD === password);
+
+      if (!passwordEntry) {
+        $.LoadingOverlay("hide");
+        Swal.fire("Error", "รหัสไม่ถูกต้อง", "error");
+        return;
+      }
+
+      if (passwordEntry.Status === "TRUE") {
+        $.LoadingOverlay("hide");
+        Swal.fire("Error", "รหัสนี้ถูกใช้ไปแล้ว", "error");
+        return;
+      }
+
+      const payload = { action: "mintCoin", uid: userUID, amount, password };
+      fetch(scriptUrl, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        mode: "no-cors",
+      })
+        .then(() => {
+          $.LoadingOverlay("hide");
+          Swal.fire("สำเร็จ", "ขุดเหรียญสำเร็จ ตรวจสอบยอดได้เลย", "success")
+            .then(() => {
+              // Reset the form
+              $("#mintForm")[0].reset();
+              $("#mintModal").modal("hide");
+            });
+        })
+        .catch(err => {
+          $.LoadingOverlay("hide");
+          Swal.fire("Error", "Failed to connect to the server.", "error");
+        });
+    })
+    .catch(err => {
+      $.LoadingOverlay("hide");
+      Swal.fire("Error", "Failed to validate password.", "error");
+    });
+}
+
+    
+        // Copy Text Function
+    function copyText(elementId) {
+      const textToCopy = document.getElementById(elementId).textContent;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        Swal.fire("คัดลอกเรียบร้อย!", `UID: ${textToCopy}`, "success");
+      }).catch(err => {
+        Swal.fire("Error", "Failed to copy UID.", "error");
+        console.error("Clipboard write failed:", err);
+      });
+    }
+    
+function showQrCode() {
+  const uid = document.getElementById("userId").textContent.trim();
+    const uName = document.getElementById("userNameDisplay").textContent.trim();
+  if (!uid) {
+    Swal.fire("Error", "UID not found. Please try again.", "error");
+    return;
+  }
+
+  // Generate QR code URL
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${uid}`;
+
+  // Display QR code in SweetAlert
+Swal.fire({
+  title: `QR CODE : ${uName}`,
+  text: `UID: ${uid}`,
+  imageUrl: qrCodeUrl,
+  imageWidth: 200,
+  imageHeight: 200,
+  imageAlt: "QR Code",
+  confirmButtonText: "Close",
+  customClass: {
+    popup: 'swal-popup-custom'
+  }
+});
+
+}
+
+    
+    
+// Submit Loan
+function submitLoan() {
+  const amount = parseFloat($("#loanAmount").val());
+  const duration = parseInt($("#loanDuration").val());
+
+  // Validate input amount
+  if (isNaN(amount) || amount < 25) {
+    Swal.fire("Error", "กรุณากรอกจำนวนเหรียญที่ต้องการกู้อย่างน้อย 25 เหรียญ", "error");
+    return;
+  }
+
+  // Fetch the stake account balance
+  $.LoadingOverlay("show", { text: "กำลังตรวจสอบข้อมูล..." });
+  fetch(`${scriptUrl}?action=getAccount&uid=${SPECIAL_ACCOUNTS.STAKE}`, { method: "GET" })
+    .then(response => response.json())
+    .then(data => {
+      $.LoadingOverlay("hide");
+
+      if (!data.success) {
+        Swal.fire("Error", "ไม่สามารถตรวจสอบยอดเหรียญในบัญชี Stake ได้", "error");
+        return;
+      }
+
+      const stakeBalance = parseFloat(data.account.balance);
+      if (stakeBalance < amount) {
+        Swal.fire(
+          "Error",
+          `ไม่สามารถกู้ได้ เนื่องจากยอดเหรียญในบัญชี Stake มีเพียง ${stakeBalance} เหรียญ`,
+          "error"
+        );
+        return;
+      }
+
+      // Proceed with loan request
+      const payload = { action: "loanCoins", uid: userUID, amount, duration };
+      $.LoadingOverlay("show", { text: "กำลังดำเนินการ..." });
+
+      fetch(scriptUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+        mode: "no-cors"
+      })
+        .then(response => response.json())
+        .then(result => {
+          $.LoadingOverlay("hide");
+          if (!result.success) {
+            Swal.fire("Error", "ไม่สามารถดำเนินการกู้ยืมได้", "error");
+            return;
+          }
+
+          Swal.fire("สำเร็จ", "ดำเนินการกู้ยืมสำเร็จ", "success");
+
+          // Display loan details
+          $("#transactionDetails").removeClass("d-none");
+          $("#transactionMessage").html(`
+            <strong>กู้ยืมสำเร็จ!</strong> จำนวน: <b>${amount.toLocaleString()} เหรียญ</b><br>
+            ต้องชำระคืนภายในอีก: <b>${duration} วัน</b>
+          `);
+          $("#loanModal").modal("hide");
+        })
+        .catch(err => {
+          $.LoadingOverlay("hide");
+          Swal.fire("Error", "ไม่สามารถดำเนินการกู้ยืมได้", "error");
+          console.error("Loan Error:", err);
+        });
+    })
+    .catch(err => {
+      $.LoadingOverlay("hide");
+      Swal.fire("Error", "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์", "error");
+      console.error("Stake Account Fetch Error:", err);
+    });
+}
+
+
+
+
+
+// Submit Swap
+function submitSwap() {
+  const amount = parseFloat($("#swapAmount").val());
+  const swapTo = $("#swapTo").val();
+
+  if (isNaN(amount) || amount <= 0) {
+    Swal.fire("Error", "Please enter a valid amount to swap.", "error");
+    return;
+  }
+
+  const payload = { action: "swapCoins", uid: userUID, amount, swapTo };
+
+  $.LoadingOverlay("show", { text: "Processing swap..." });
+
+  fetch(scriptUrl, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    mode: "no-cors", // No-CORS mode
+    headers: {
+      "Content-Type": "application/json", // Content type for JSON payload
+    },
+  })
+    .then(() => {
+      $.LoadingOverlay("hide");
+      Swal.fire({
+        title: "เรียบร้อย",
+        text: "แลกเปลี่ยนเหรียญเป็น NFTs เรียบร้อย สามารถกลับหน้าหลักเพื่อดู NFTs ได้เลย",
+        icon: "success",
+      }).then(() => {
+        $("#swapModal").modal("hide");
+        // Optionally, refresh NFTs or user balance here if you have another method
+        fetchNFTs();
+      });
+    })
+    .catch((err) => {
+      $.LoadingOverlay("hide");
+      Swal.fire("Error", "Failed to process swap.", "error");
+      console.error("Swap Error:", err);
+    });
+}
+
+
+    
+    
+
+// Submit Stake
+function submitStake() {
+  const amount = parseFloat($("#stakeAmount").val());
+  const duration = parseInt($("#stakeDuration").val());
+
+  // Validate input amount
+  if (isNaN(amount) || amount < 25) {
+    Swal.fire("Error", "กรุณากรอกจำนวนเหรียญที่ต้องการฝากอย่างน้อย 25 เหรียญ", "error");
+    return;
+  }
+
+  const payload = { action: "stakeCoins", uid: userUID, amount, duration };
+  $.LoadingOverlay("show", { text: "กำลังดำเนินการฝากเหรียญ..." });
+
+  fetch(scriptUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+    mode: "no-cors"
+  })
+    .then(response => response.json())
+    .then(result => {
+      $.LoadingOverlay("hide");
+
+      if (!result.success) {
+        Swal.fire("Error", "ไม่สามารถดำเนินการฝากเหรียญได้", "error");
+        return;
+      }
+
+      Swal.fire("สำเร็จ", "ทำการฝากเหรียญเรียบร้อยแล้ว", "success");
+
+      // Display stake details
+      $("#transactionDetails").removeClass("d-none");
+      $("#transactionMessage").html(`
+        <strong>การฝากสำเร็จ!</strong> จำนวน: <b>${amount.toLocaleString()} เหรียญ</b><br>
+        จะได้รับคืนพร้อมดอกเบี้ยใน: <b>${duration} วัน</b>
+      `);
+      $("#stakeModal").modal("hide");
+    })
+    .catch(err => {
+      $.LoadingOverlay("hide");
+      Swal.fire("Error", "ไม่สามารถดำเนินการฝากเหรียญได้", "error");
+      console.error(err);
+    });
+}
+
+
+
+    
+    
+    
+function fetchNFTs() {
+  $.LoadingOverlay("show", { text: "Loading NFTs..." });
+
+  // Fetch the user's NFTs
+  fetch(`${scriptUrl}?action=getAccount&uid=${userUID}`, { method: "GET" })
+    .then(response => response.json())
+    .then(accountData => {
+      if (accountData.success && accountData.account.JSON) {
+        const nftUrls = accountData.account.JSON.split(",");
+        const gallery = $("#nftGallery");
+        gallery.empty(); // Clear existing items
+
+        // Fetch the marketplace listings to check for listed NFTs
+        fetch(`${scriptUrl}?action=getMarketplace`, { method: "GET" })
+          .then(response => response.json())
+          .then(marketplaceData => {
+            $.LoadingOverlay("hide");
+
+            const listedNFTs = marketplaceData.success ? marketplaceData.nfts.map(nft => nft.url) : [];
+
+            nftUrls.forEach(url => {
+              const isListed = listedNFTs.includes(url); // Check if the NFT is listed
+
+              gallery.append(`
+                <div class="col">
+                  <div class="card nft">
+                    <img src="${url}" class="card-img-top" alt="NFT">
+                    <div class="card-body text-center">
+                      <p class="card-text">NFT</p>
+                      ${isListed 
+                        ? `<span class="badge bg-success">Listed</span>` 
+                        : `
+                          <button class="btn btn-primary btn-sm w-100" onclick="initiateNftTransfer('${url}')">Transfer</button>
+                          <button class="btn btn-danger mt-1 w-100 btn-sm" onclick="openListNFTModal('${url}')">Sell NFT</button>
+                        `}
+                    </div>
+                  </div>
+                </div>
+              `);
+            });
+          })
+          .catch(err => {
+            $.LoadingOverlay("hide");
+            console.error("Error fetching marketplace:", err);
+            Swal.fire("Error", "Failed to check marketplace listings.", "error");
+          });
+      } else {
+        $.LoadingOverlay("hide");
+        $("#nftGallery").html(`<p>No NFTs available.</p>`);
+      }
+    })
+    .catch(err => {
+      $.LoadingOverlay("hide");
+      console.error("Error fetching NFTs:", err);
+      Swal.fire("Error", "Failed to load NFTs.", "error");
+    });
+}
+
+
+
+
+// Initialize NFT Transfer Modal
+function initiateNftTransfer(nftUrl) {
+  $("#selectedNftUrl").val(nftUrl);
+  $("#selectedNftImage").attr("src", nftUrl).show(); // Show the NFT image
+  $("#transferNftModal").modal("show");
+}
+
+// Submit NFT Transfer (NO-CORS mode)
+function submitNftTransfer() {
+  const recipientUID = $("#recipientUID").val();
+  const nftUrl = $("#selectedNftUrl").val();
+
+  if (!recipientUID || !nftUrl) {
+    Swal.fire("Error", "Please provide all required details.", "error");
+    return;
+  }
+
+  const payload = { action: "transferNFT", fromUID: userUID, toUID: recipientUID, nftUrl };
+
+  $.LoadingOverlay("show", { text: "Processing NFT transfer..." });
+
+  fetch(scriptUrl, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: { "Content-Type": "application/json" },
+    mode: "no-cors", // Use no-cors mode
+  })
+    .then(() => {
+      // Assume success since no-cors won't allow full response handling
+      $.LoadingOverlay("hide");
+      Swal.fire("สำเร็จ", "NFT ถูกโอนไปยังบัญชีเป้าหมายแล้ว", "success").then(() => {
+        $("#transferNftModal").modal("hide");
+        
+        // Reset the form fields
+        $("#transferNftForm")[0].reset();
+        
+        fetchNFTs(); // Refresh NFT display
+      });
+    })
+    .catch(err => {
+      $.LoadingOverlay("hide");
+      Swal.fire("Error", "Failed to transfer NFT.", "error");
+      console.error("NFT Transfer Error:", err);
+    });
+}
+
+
+// QR Code Reader for NFT Transfer
+let nftQrScanner;
+
+function startNftQrScanner() {
+  $("#nft-qr-scanner").show();
+  if (!nftQrScanner) {
+    nftQrScanner = new Html5Qrcode("nft-reader");
+  }
+  nftQrScanner.start(
+    { facingMode: "environment" }, // Use back camera
+    { fps: 10, qrbox: 250 },
+    (decodedText) => {
+      $("#recipientUID").val(decodedText); // Set the decoded UID
+      stopNftQrScanner();
+      Swal.fire("QR Code Scanned", `Recipient UID: ${decodedText}`, "success");
+    },
+    (errorMessage) => {
+      console.error("QR Scan Error:", errorMessage);
+    }
+  ).catch(err => {
+    console.error("QR Scanner Error:", err);
+  });
+}
+
+function stopNftQrScanner() {
+  $("#nft-qr-scanner").hide();
+  if (nftQrScanner) {
+    nftQrScanner.stop().catch(err => console.error("NFT QR Scanner Stop Error:", err));
+  }
+}
+
+
+    
+function validateSwapEligibility() {
+  $.LoadingOverlay("show", { text: "Checking balance..." });
+
+  fetch(`${scriptUrl}?action=getAccount&uid=${userUID}`, { method: "GET" })
+    .then(response => response.json())
+    .then(data => {
+      $.LoadingOverlay("hide");
+
+      if (data.success) {
+        const balance = parseFloat(data.account.balance);
+
+        if (balance >= 750) {
+          // Enable the swap button, hide warning, and clear error messages
+          $("#swapButton").prop("disabled", false);
+          $("#swapWarning").addClass("d-none");
+        } else {
+          // Disable the swap button, show warning, and set error message
+          $("#swapButton").prop("disabled", true);
+          $("#swapWarning").removeClass("d-none");
+        }
+      } else {
+        Swal.fire("Error", "Failed to fetch account balance.", "error");
+      }
+    })
+    .catch(err => {
+      $.LoadingOverlay("hide");
+      console.error("Balance Check Error:", err);
+      Swal.fire("Error", "Unable to check balance.", "error");
+    });
+}
+
+// Trigger validation when the Swap Modal is opened
+$("#swapModal").on("show.bs.modal", function () {
+  validateSwapEligibility();
+});
+
+    
+    
+function fetchFilteredLogger() {
+  const currentUID = userUID; // Current logged-in user UID
+
+  if (!currentUID) {
+    Swal.fire("Error", "Unable to fetch your UID.", "error");
+    return;
+  }
+
+  $.LoadingOverlay("show", { text: "Loading transaction logs..." });
+
+  fetch(`${scriptUrl}?action=getLogger`, { method: "GET" })
+    .then((response) => response.json())
+    .then((data) => {
+      $.LoadingOverlay("hide");
+
+      if (!data.success) {
+        Swal.fire("Error", "Unable to fetch transaction logs.", "error");
+        return;
+      }
+
+      // Filter logs for the current UID
+      const filteredLogs = data.logs.filter((log) =>
+        log.Details.includes(currentUID)
+      );
+
+      displayFilteredLogs(filteredLogs);
+    })
+    .catch((err) => {
+      $.LoadingOverlay("hide");
+      console.error("Error fetching logs:", err);
+      Swal.fire("Error", "Failed to load transaction logs.", "error");
+    });
+}
+
+    
+let currentPage = 1;
+const rowsPerPage = 6;
+
+function blurUID(details) {
+  // Regular expression to find UIDs in 'From', 'To', or standalone formats and blur the last 4 characters
+  return details.replace(/(UID:|From:|To:)\s(\w{12})(\w{4})/g, "$1 $2****");
+}
+
+function displayFilteredLogs(filteredLogs) {
+  const loggerTable = $("#loggerTable tbody");
+  const totalPages = Math.ceil(filteredLogs.length / rowsPerPage);
+
+  loggerTable.empty();
+
+  if (filteredLogs.length === 0) {
+    loggerTable.append("<tr><td colspan='3' class='text-center'>No transactions found.</td></tr>");
+    $("#pagination").empty();
+    return;
+  }
+
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = Math.min(startIndex + rowsPerPage, filteredLogs.length);
+
+  filteredLogs.slice(startIndex, endIndex).forEach((log) => {
+    const blurredDetails = blurUID(log.Details);
+    loggerTable.append(`
+      <tr>
+        <td>${log.Timestamp}</td>
+        <td>${log.Action}</td>
+        <td>${blurredDetails}</td>
+      </tr>
+    `);
+  });
+
+  updatePagination(totalPages);
+}
+
+function updatePagination(totalPages) {
+  const paginationContainer = $("#pagination");
+  paginationContainer.empty();
+
+  if (totalPages <= 1) return;
+
+  for (let i = 1; i <= totalPages; i++) {
+    paginationContainer.append(`
+      <button class="btn btn-sm ${i === currentPage ? "btn-primary" : "btn-light"} mx-1" onclick="goToPage(${i})">
+        ${i}
+      </button>
+    `);
+  }
+}
+
+function goToPage(page) {
+  currentPage = page;
+  fetchFilteredLogger(); // Re-fetch logs for the current page
+}
+
+
+
+function openListNFTModal(nftUrl) {
+  // Set the NFT URL in the modal
+  $("#nftID").val(nftUrl); // Assign the NFT URL
+  $("#userUID").val(userUID); // Assign the logged-in user UID
+
+  // Update the image preview
+  $("#nftImagePreview").attr("src", nftUrl).show();
+
+  // Show the modal
+  $("#listNFTModal").modal("show");
+}
+
+
+    
+    
+function fetchLoanerDetails() {
+  $.LoadingOverlay("show", { text: "Loading loan details..." });
+
+  fetch(`${scriptUrl}?action=getLoanerDetails&uid=${userUID}`, { method: "GET" })
+    .then((response) => response.json())
+    .then((data) => {
+      $.LoadingOverlay("hide");
+      const loanerTable = $("#loanerTable tbody");
+      loanerTable.empty();
+
+      if (data.success && data.loans && data.loans.length > 0) {
+        data.loans.forEach((loan) => {
+          const row = `
+            <tr>
+              <td>${loan.amount.toLocaleString()}</td>
+              <td>${loan.interest}</td>
+              <td>${loan.repaymentDate || "N/A"}</td>
+              <td>${loan.status || "Pending"}</td>
+            </tr>`;
+          loanerTable.append(row);
+        });
+        $("#loanerDetails").removeClass("d-none");
+      } else {
+        loanerTable.append("<tr><td colspan='4' class='text-center'>No loans found.</td></tr>");
+      }
+    })
+    .catch((err) => {
+      $.LoadingOverlay("hide");
+      console.error("Error fetching loaner details:", err);
+      Swal.fire("Error", "Failed to load loan details.", "error");
+    });
+}
+
+    
+function fetchStakerDetails() {
+  $.LoadingOverlay("show", { text: "Loading staker details..." });
+
+  fetch(`${scriptUrl}?action=getStakerDetails&uid=${userUID}`, { method: "GET" })
+    .then((response) => response.json())
+    .then((data) => {
+      $.LoadingOverlay("hide");
+      const stakerTable = $("#stakerTable tbody");
+      stakerTable.empty();
+
+      if (data.success && data.stakes && data.stakes.length > 0) {
+        data.stakes.forEach((stake) => {
+          const row = `
+            <tr>
+              <td>${stake.amount.toLocaleString()}</td>
+              <td>${stake.interest.toLocaleString()}</td>
+              <td>${stake.returnDate || "N/A"}</td>
+              <td>${stake.status || "Active"}</td>
+            </tr>`;
+          stakerTable.append(row);
+        });
+        $("#stakerDetails").removeClass("d-none");
+      } else {
+        stakerTable.append("<tr><td colspan='4' class='text-center'>No stakes found.</td></tr>");
+      }
+    })
+    .catch((err) => {
+      $.LoadingOverlay("hide");
+      console.error("Error fetching staker details:", err);
+      Swal.fire("Error", "Failed to load staker details.", "error");
+    });
+}
+
+
+    
+function submitNFTListing() {
+  const nftUrl = $("#nftID").val();
+  const price = parseFloat($("#nftPrice").val());
+  const uid = $("#userUID").val();
+
+  if (!nftUrl || isNaN(price) || price <= 0) {
+    Swal.fire("Error", "Please provide valid NFT details.", "error");
+    return;
+  }
+
+  // Check if the NFT is already listed
+  $.LoadingOverlay("show", { text: "Validating NFT listing..." });
+  fetch(`${scriptUrl}?action=getMarketplace`, { method: "GET" })
+    .then((response) => response.json())
+    .then((data) => {
+      $.LoadingOverlay("hide");
+
+      if (data.success && data.nfts.some((nft) => nft.url === nftUrl)) {
+        Swal.fire("Error", "This NFT is already listed in the marketplace.", "error");
+        return;
+      }
+
+      // If validation passes, proceed to list the NFT
+      const payload = {
+        action: "listNFT",
+        uid: uid,
+        nftUrl: nftUrl,
+        price: price,
+      };
+
+      $.LoadingOverlay("show", { text: "Listing NFT..." });
+
+      fetch(scriptUrl, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" },
+        mode: "no-cors",
+      })
+        .then(() => {
+          $.LoadingOverlay("hide");
+          Swal.fire("Success", "NFT listed for sale.", "success").then(() => {
+            $("#listNFTModal").modal("hide");
+            fetchMarketplace(); // Refresh marketplace listings
+            fetchNFTs();
+          });
+        })
+        .catch((err) => {
+          $.LoadingOverlay("hide");
+          console.error("Error listing NFT:", err);
+          Swal.fire("Error", "Failed to list NFT.", "error");
+        });
+    })
+    .catch((err) => {
+      $.LoadingOverlay("hide");
+      console.error("Error validating marketplace:", err);
+      Swal.fire("Error", "Failed to validate NFT listing.", "error");
+    });
+}
+
+
+
+    
+function fetchMarketplace() {
+  $.LoadingOverlay("show", { text: "Loading marketplace..." });
+
+  fetch(`${scriptUrl}?action=getMarketplace`, { method: "GET" })
+    .then(response => response.json())
+    .then(data => {
+      $.LoadingOverlay("hide");
+
+      const marketplaceListing = $("#marketplaceListing");
+      const userListings = $("#userListings");
+
+      marketplaceListing.empty();
+      userListings.empty();
+
+      if (data.success && data.nfts.length > 0) {
+        data.nfts.forEach(nft => {
+          // Format price with thousand separators
+          const formattedPrice = parseFloat(nft.price).toLocaleString('en-US');
+
+          const listItemHtml = `
+<li class="list-group-item d-flex align-items-center" style="padding-left: 6px;">
+  <img src="${nft.url}" alt="NFT" class="rounded" style="width: 60px; height: 50px;">
+  <div>
+    <p class="m-0" style="font-size: 10px;">👤 : ${nft.uid}</p>
+    <span class="text-success fw-bold">💰 : ${formattedPrice} เหรียญ</span>
+  </div>
+  ${nft.uid === userUID
+    ? `<button class="btn btn-danger btn-sm ms-auto" onclick="cancelListing('${nft.uid}', '${nft.url}')"><i class="fa-solid fa-trash"></i></button>`
+    : `<button class="btn btn-success btn-sm ms-auto" onclick="buyNFT(${nft.id}, '${nft.url}', ${nft.price})"><i class="fa-solid fa-cart-shopping"></i></button>`}
+</li>
+          `;
+
+          if (nft.uid === userUID) {
+            userListings.append(listItemHtml);
+          } else {
+            marketplaceListing.append(listItemHtml);
+          }
+        });
+      } else {
+        marketplaceListing.html(`<p class="text-center">No NFTs available for sale.</p>`);
+        userListings.html(`<p class="text-center">You have no listed NFTs.</p>`);
+      }
+    })
+    .catch(err => {
+      $.LoadingOverlay("hide");
+      console.error("Error fetching marketplace:", err);
+      Swal.fire("Error", "Failed to load marketplace.", "error");
+    });
+}
+
+
+
+    
+
+    
+    $("#marketplaceModal").on("show.bs.modal", function () {
+  fetchMarketplace();
+});
+
+
+    
+function cancelListing(nftUrl) {
+  const uid = userUID; // Assume logged-in user's UID
+
+  Swal.fire({
+    title: "Confirm Cancel?",
+    text: "Are you sure you want to remove this NFT from the marketplace?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, cancel it!",
+    cancelButtonText: "No, keep it",
+  }).then(result => {
+    if (result.isConfirmed) {
+      const payload = { action: "cancelListing", uid, nftUrl };
+
+      $.LoadingOverlay("show", { text: "Processing..." });
+
+      fetch(scriptUrl, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" },
+        mode: "no-cors",
+      })
+        .then(() => {
+          $.LoadingOverlay("hide");
+          Swal.fire("Cancelled", "Your NFT listing has been removed.", "success").then(() => {
+            fetchMarketplace(); // Refresh the marketplace listing
+            fetchNFTs();
+          });
+        })
+        .catch(err => {
+          $.LoadingOverlay("hide");
+          Swal.fire("Error", "Failed to cancel listing.", "error");
+          console.error("Cancel Listing Error:", err);
+        });
+    }
+  });
+}
+
+
+
+function buyNFT(nftId, nftUrl, price) {
+  // Fetch user's balance before proceeding
+  $.LoadingOverlay("show", { text: "Checking your balance..." });
+
+  fetch(`${scriptUrl}?action=getAccount&uid=${userUID}`, { method: "GET" })
+    .then(response => response.json())
+    .then(data => {
+      $.LoadingOverlay("hide");
+
+      if (!data.success) {
+        Swal.fire("Error", "Failed to fetch your balance.", "error");
+        return;
+      }
+
+      const balance = parseFloat(data.account.balance);
+
+      if (balance < price) {
+        // Display warning if balance is insufficient
+        Swal.fire({
+          title: "ยอดเหรียญไม่เพียงพอ",
+          text: `ต้องมียอดเหรียญขั้นต่ำ ${price} เหรียญ ตอนนี้คุณมีเหรียญเพียง ${balance} เหรียญ`,
+          icon: "warning",
+        });
+      } else {
+        // Proceed with the purchase if balance is sufficient
+        Swal.fire({
+          title: "Confirm Purchase?",
+          text: `ยืนยันการซื้อ NFTs ราคา ${price} เหรียญ?`,
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes, Buy It!",
+          cancelButtonText: "No, Cancel",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const payload = {
+              action: "buyNFT",
+              buyerUID: userUID,
+              nftId: nftId,
+              nftUrl: nftUrl,
+              price: price,
+            };
+
+            $.LoadingOverlay("show", { text: "Processing purchase..." });
+
+            fetch(scriptUrl, {
+              method: "POST",
+              body: JSON.stringify(payload),
+              headers: { "Content-Type": "application/json" },
+              mode: "no-cors",
+            })
+              .then(() => {
+                $.LoadingOverlay("hide");
+                Swal.fire("Success", "NFT purchased successfully!", "success").then(() => {
+                  fetchMarketplace(); // Refresh marketplace listings
+                  fetchNFTs(); // Refresh user's NFT gallery
+                });
+              })
+              .catch((err) => {
+                $.LoadingOverlay("hide");
+                Swal.fire("Error", "Failed to complete the purchase.", "error");
+                console.error("Buy NFT Error:", err);
+              });
+          }
+        });
+      }
+    })
+    .catch(err => {
+      $.LoadingOverlay("hide");
+      console.error("Error fetching balance:", err);
+      Swal.fire("Error", "Unable to check your balance.", "error");
+    });
+}
+
+    
+  </script>
+  
+    <footer>
+    © <script>document.write(new Date().getFullYear());</script> Copyright | พัฒนาโดยครูสิทธิชาติ สิทธิ
+    <a href="https://www.facebook.com/SanwithzWebapp" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+    <a href="https://www.youtube.com/@Sanwithz" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+  </footer>
+  
+</body>
+</html>
