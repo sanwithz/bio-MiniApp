@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สื่อการเรียนรู้แบบวิดีโอ</title>
+ 
+  <!-- jquery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+  <!-- Tailwind css -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+  <!-- Loading Overlay -->
+  <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+
+  <!-- Sweet Alert -->
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+
+        body {
+        background: linear-gradient(0deg, rgba(252, 233, 233, 1) 0%, rgba(224, 244, 241, 1) 26%, rgba(255, 255, 255, 1) 71%);
+            min-height: 100vh;
+        }
+
+    * { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Sarabun", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+    </style>
+
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans">
+
+  <!-- Page Title -->
+  <header class="text-center py-8">
+    <h1 class="text-3xl font-bold">สื่อการเรียนรู้แบบวิดีโอ</h1>
+  </header>
+
+  <!-- Grid of Video Cards -->
+  <main class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-6 max-w-7xl mx-auto">
+
+    <!-- Video 2.1 -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <iframe class="w-full aspect-video" src="https://www.youtube.com/embed/PRGDs_ks6X8" frameborder="0" allowfullscreen></iframe>
+      <div class="p-4">
+        <h2 class="text-sm font-semibold">2.1 วิชาชีววิทยา - ปฏิกิริยาแสง Light Reaction</h2>
+      </div>
+    </div>
+
+    <!-- Video 2.2 -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <iframe class="w-full aspect-video" src="https://www.youtube.com/embed/oRosudsukSU" frameborder="0" allowfullscreen></iframe>
+      <div class="p-4">
+        <h2 class="text-sm font-semibold">2.2 ปฏิกิริยาคาร์บอน Carbon Reaction</h2>
+      </div>
+    </div>
+
+    <!-- Video 2.3 -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <iframe class="w-full aspect-video" src="https://www.youtube.com/embed/oVicNHMM45A" frameborder="0" allowfullscreen></iframe>
+      <div class="p-4">
+        <h2 class="text-sm font-semibold">2.3 ปัจจัยจำกัดในการสังเคราะห์แสง</h2>
+      </div>
+    </div>
+
+    <!-- Video 2.4 -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <iframe class="w-full aspect-video" src="https://www.youtube.com/embed/hHGnhuWvsTA" frameborder="0" allowfullscreen></iframe>
+      <div class="p-4">
+        <h2 class="text-sm font-semibold">2.4 กระบวนการเกิดโฟโตเรสไพเรชัน</h2>
+      </div>
+    </div>
+
+    <!-- Video 2.5 -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <iframe class="w-full aspect-video" src="https://www.youtube.com/embed/-xfQXDbfKKA" frameborder="0" allowfullscreen></iframe>
+      <div class="p-4">
+        <h2 class="text-sm font-semibold">2.5 กลไกการเพิ่มความเข้มข้นของคาร์บอนไดออกไซด์ในพืช C4</h2>
+      </div>
+    </div>
+
+    <!-- Video 2.6 -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <iframe class="w-full aspect-video" src="https://www.youtube.com/embed/0hHnYaWwRKA" frameborder="0" allowfullscreen></iframe>
+      <div class="p-4">
+        <h2 class="text-sm font-semibold">2.6 กลไกการเพิ่มความเข้มข้นของคาร์บอนไดออกไซด์ในพืช CAM</h2>
+      </div>
+    </div>
+
+  </main>
+
+<!-- Footer -->
+<div class="w-full mt-4">
+<footer class="bg-white border-t border-gray-200 py-4">
+<div class="container mx-auto px-4 text-center text-sm">
+<p>© <script>document.write(new Date().getFullYear());</script> Copyright | พัฒนาโดยครูสิทธิชาติ สิทธิ
+<a href="https://www.facebook.com/SanwithzWebapp" target="_blank"><i class="fa-brands fa-facebook  text-blue-500 hover:text-blue-700"></i></a>
+<a href="https://www.youtube.com/@Sanwithz" target="_blank"><i class="fa-brands fa-youtube text-red-500 hover:text-red-700"></i></a></p>
+</div>
+</footer>
+</div>
+
+</body>
+</html>
